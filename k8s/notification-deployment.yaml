@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      containers:
+        - name: notification
+          image: REPLACE_WITH_YOUR_REGISTRY/notification-service:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: EMAIL_HOST
+              value: "smtp.example.com"
+            - name: EMAIL_PORT
+              value: "587"
+            - name: EMAIL_USER
+              value: "notificaciones@practico.com"
+            - name: EMAIL_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: smtp-credentials
+                  key: password
+            - name: ADMIN_EMAIL
+              value: "admin@example.com"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+spec:
+  selector:
+    app: notification
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+  type: ClusterIP
