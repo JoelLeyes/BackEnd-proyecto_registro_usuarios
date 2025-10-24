@@ -15,7 +15,9 @@ class UsuarioListCreateView(generics.ListCreateAPIView):
         usuario = serializer.save()
 
         # Llamar al microservicio de notificaciones vía HTTP
-        notify_url = os.environ.get('NOTIFICACIONES_URL', 'http://notificaciones:5001/notify')
+        # Usar localhost para desarrollo local, notificaciones:5001 para Docker
+        default_url = 'http://localhost:5001/notify' if os.environ.get('LOCAL_DEV') else 'http://notificaciones:5001/notify'
+        notify_url = os.environ.get('NOTIFICACIONES_URL', default_url)
         payload = {
             'nombre': usuario.nombre if hasattr(usuario, 'nombre') else getattr(usuario, 'name', ''),
             'email': usuario.email,
