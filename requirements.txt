@@ -1,0 +1,8 @@
+Django==5.2.7
+djangorestframework
+django-cors-headers
+psycopg2-binary
+requests
+
+# Optional / helpful for production, uncomment if needed
+# gunicorn

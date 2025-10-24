@@ -1,20 +1,11 @@
 import os
-import sys
 from rest_framework import generics
 from .models import Usuario
 from .serializers import UsuarioSerializer
 from django.core.mail import send_mail
 from django.conf import settings
+import requests
 
-# Ruta absoluta al repo de notificaciones
-ruta_notificaciones = os.path.abspath(
-    os.path.join(os.path.dirname(__file__), '..', '..', '..', 'Notificaciones-proyecto_registro_usuarios')
-)
-
-print("Ruta notificaciones:", ruta_notificaciones)  # para debug
-sys.path.append(ruta_notificaciones)
-
-from enviar_notificacion import enviar_notificacion
 
 class UsuarioListCreateView(generics.ListCreateAPIView):
     queryset = Usuario.objects.all()
@@ -23,5 +14,17 @@ class UsuarioListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         usuario = serializer.save()
 
-        # --- Llamar a la función del repo de notificaciones ---
-        enviar_notificacion(usuario)
+        # Llamar al microservicio de notificaciones vía HTTP
+        notify_url = os.environ.get('NOTIFICACIONES_URL', 'http://notificaciones:5001/notify')
+        payload = {
+            'nombre': usuario.nombre if hasattr(usuario, 'nombre') else getattr(usuario, 'name', ''),
+            'email': usuario.email,
+            'telefono': getattr(usuario, 'telefono', None),
+        }
+        try:
+            resp = requests.post(notify_url, json=payload, timeout=5)
+            resp.raise_for_status()
+        except Exception as e:
+            # No queremos que falle la creación del usuario por un fallo en notificaciones;
+            # logueamos el error para diagnosticarlo.
+            print(f"Error al notificar: {e}")
