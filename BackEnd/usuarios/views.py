@@ -16,7 +16,7 @@ class UsuarioListCreateView(generics.ListCreateAPIView):
 
         # Llamar al microservicio de notificaciones vía HTTP
         # Usar localhost para desarrollo local, notificaciones:5001 para Docker
-        default_url = 'http://localhost:5001/notify' if os.environ.get('LOCAL_DEV') else 'http://notificaciones:5001/notify'
+        default_url = 'http://127.0.0.1:5001/notify' if os.environ.get('LOCAL_DEV') else 'http://notificaciones:5001/notify'
         notify_url = os.environ.get('NOTIFICACIONES_URL', default_url)
         payload = {
             'nombre': usuario.nombre if hasattr(usuario, 'nombre') else getattr(usuario, 'name', ''),

@@ -10,11 +10,11 @@ COPY requirements.txt /app/
 # Instala las dependencias necesarias
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copia el resto de los archivos del backend al contenedor
-COPY . /app
+# Copia el contenido de la carpeta BackEnd al contenedor
+COPY BackEnd /app/
 
 # Expone el puerto en el que corre el servidor Django
 EXPOSE 8000
 
-# Comando para iniciar el servidor Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+# Asegura que las migraciones se ejecuten y crea el superusuario si es necesario
+CMD ["sh", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
