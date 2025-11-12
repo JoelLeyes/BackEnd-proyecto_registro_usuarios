@@ -2,8 +2,6 @@ import os
 from rest_framework import generics
 from .models import Usuario
 from .serializers import UsuarioSerializer
-from django.core.mail import send_mail
-from django.conf import settings
 import requests
 
 
@@ -14,19 +12,23 @@ class UsuarioListCreateView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         usuario = serializer.save()
 
-        # Llamar al microservicio de notificaciones vía HTTP
-        # Usar localhost para desarrollo local, notificaciones:5001 para Docker
-        default_url = 'http://127.0.0.1:5001/notify' if os.environ.get('LOCAL_DEV') else 'http://notificaciones:5001/notify'
+        # --- URL del microservicio de notificaciones ---
+        # Si no se definió una variable de entorno, usa el servicio Kubernetes interno
+        default_url = 'http://notificaciones:5001/notify'
         notify_url = os.environ.get('NOTIFICACIONES_URL', default_url)
+
+        # --- Datos del usuario para enviar ---
         payload = {
-            'nombre': usuario.nombre if hasattr(usuario, 'nombre') else getattr(usuario, 'name', ''),
+            'nombre': usuario.nombre,
             'email': usuario.email,
             'telefono': getattr(usuario, 'telefono', None),
         }
+
+        # --- Enviar notificación ---
         try:
             resp = requests.post(notify_url, json=payload, timeout=5)
             resp.raise_for_status()
+            print(f"✅ Notificación enviada correctamente a {usuario.email}")
         except Exception as e:
-            # No queremos que falle la creación del usuario por un fallo en notificaciones;
-            # logueamos el error para diagnosticarlo.
-            print(f"Error al notificar: {e}")
+            print(f"⚠️ Error al notificar al microservicio: {e}")
+
