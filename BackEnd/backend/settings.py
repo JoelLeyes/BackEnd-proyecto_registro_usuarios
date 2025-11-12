@@ -88,8 +88,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'proyecto_registro_usuarios'),
         'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'yoelymale'),
-        'HOST': os.environ.get('DB_HOST', 'rds-postgres.cxgy1kltcarc.us-east-1.rds.amazonaws.com'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'ignacio2002'),
+        'HOST': os.environ.get('DB_HOST', 'rds-postgres1-instance-1.ciq8o9szmbfo.us-east-1.rds.amazonaws.com'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }
