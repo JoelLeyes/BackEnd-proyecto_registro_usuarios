@@ -26,8 +26,8 @@ SECRET_KEY = 'django-insecure-^9#ib^(%yxtqisuv*1dhqhi771khmhi(95rn%_@ge=t4r#+)j!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-]
+ALLOWED_HOSTS = ["*", ".elb.amazonaws.com", "backend", "localhost"]
+
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5500",
@@ -51,13 +51,13 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -88,8 +88,8 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.environ.get('DB_NAME', 'proyecto_registro_usuarios'),
         'USER': os.environ.get('DB_USER', 'postgres'),
-        'PASSWORD': os.environ.get('DB_PASSWORD', 'ignacio2002'),
-        'HOST': os.environ.get('DB_HOST', 'rds-postgres1-instance-1.ciq8o9szmbfo.us-east-1.rds.amazonaws.com'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'yoelymale'),
+        'HOST': os.environ.get('DB_HOST', 'rds-postgres.cxgy1kltcarc.us-east-1.rds.amazonaws.com'),
         'PORT': os.environ.get('DB_PORT', '5432'),
     }
 }

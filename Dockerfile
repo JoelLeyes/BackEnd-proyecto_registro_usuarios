@@ -7,8 +7,9 @@ WORKDIR /app
 # Copia solo el archivo de dependencias primero (mejora cache de Docker)
 COPY requirements.txt /app/
 
-# Instala las dependencias necesarias
-RUN pip install --no-cache-dir -r requirements.txt
+# Actualiza pip a versión segura y luego instala dependencias
+RUN pip install --no-cache-dir --upgrade pip==25.3 && \
+    pip install --no-cache-dir -r requirements.txt
 
 # Copia el contenido de la carpeta BackEnd al contenedor
 COPY BackEnd /app/
